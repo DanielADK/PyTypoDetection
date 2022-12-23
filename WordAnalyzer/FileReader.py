@@ -24,30 +24,28 @@ class FileReader:
                     return False
                 self.custom_words.add(line.replace("\n", ""))
         return True
-    def read_all_files(self) -> bool:
-        all_files = self.__library__.get_all_files()
-        for file in all_files:
-            opened_file = open(file, "r")
+    def read_books(self) -> bool:
+        all_books = self.__library__.get_books()
+        for file in all_books:
+            with open(file, "r") as opened_file:
 
-            # Read line by line till the EOF
-            start_of_reading = False
-            while True:
-                line = opened_file.readline()
-                if not line:
-                    break
-                if not start_of_reading:
-                    if line == "# START OF READING\n":
-                        start_of_reading = True
-                    continue
+                # Read line by line till the EOF
+                start_of_reading = False
+                while True:
+                    line = opened_file.readline()
+                    if not line:
+                        break
+                    if not start_of_reading:
+                        if line == "# START OF READING\n":
+                            start_of_reading = True
+                        continue
 
-                words = line.split(" ")
-                # Process words => remove non-alphabetic chars
-                for word in words:
-                    word = WordUtilities.process(word)
-                    if len(word) != 0:
-                        self.words.add(word)
-
-            opened_file.close()
+                    words = line.split(" ")
+                    # Process words => remove non-alphabetic chars
+                    for word in words:
+                        word = WordUtilities.process(word)
+                        if len(word) != 0:
+                            self.words.add(word)
         return True
     def save_words(self) -> None:
         try:
