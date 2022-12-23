@@ -11,3 +11,6 @@ class Library:
         for curr_path, subdirs, files in walk(self.source_folder + "/books"):
             for file in files:
                 self.books.add(path.join(curr_path, file))
+
+    def get_all_files(self):
+        return self.books
