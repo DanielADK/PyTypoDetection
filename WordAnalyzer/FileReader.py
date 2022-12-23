@@ -7,9 +7,9 @@ from sty import fg, ef, rs
 class FileReader:
     def __init__(self, library: WordAnalyzer.Library):
         self.__library__ = library
-        self.words_save_path = "files/words.txt"
+        self.words_save_path = "files/cs/words.txt"
         self.words = set()
-        self.custom_words_path = "files/custom_words.txt"
+        self.custom_words_path = "files/cs/custom_words.txt"
         self.custom_words = set()
 
     def read_custom_words(self) -> bool:
