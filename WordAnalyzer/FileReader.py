@@ -1,3 +1,4 @@
+import json
 import string
 import WordAnalyzer.Library
 from WordAnalyzer import WordUtilities
@@ -6,11 +7,11 @@ from sty import fg, ef, rs
 
 class FileReader:
     def __init__(self, library: WordAnalyzer.Library):
-        self.__library__ = library
-        self.words_save_path = "files/cs/words.txt"
-        self.words = set()
-        self.custom_words_path = "files/cs/custom_words.txt"
-        self.custom_words = set()
+        self.__library__: WordAnalyzer.Library = library
+        self.words_save_path: string = "files/cs/words.txt"
+        self.words: set = set()
+        self.custom_words_path: string = "files/cs/custom_words.txt"
+        self.custom_words: set = set()
 
     def read_custom_words(self) -> bool:
         with open(self.custom_words_path, "r") as file:
@@ -25,12 +26,12 @@ class FileReader:
                 self.custom_words.add(line.replace("\n", ""))
         return True
     def read_books(self) -> bool:
-        all_books = self.__library__.get_books()
+        all_books: set = self.__library__.get_books()
         for file in all_books:
             with open(file, "r") as opened_file:
 
                 # Read line by line till the EOF
-                start_of_reading = False
+                start_of_reading: bool = False
                 while True:
                     line = opened_file.readline()
                     if not line:
@@ -40,13 +41,25 @@ class FileReader:
                             start_of_reading = True
                         continue
 
-                    words = line.split(" ")
+                    words: list[string] = line.split(" ")
                     # Process words => remove non-alphabetic chars
                     for word in words:
-                        word = WordUtilities.process(word)
+                        word: string = WordUtilities.process(word)
                         if len(word) != 0:
                             self.words.add(word)
         return True
+    def read_dictionary(self) -> bool:
+        all_dict: set = self.__library__.get_dictionaries()
+        for file in all_dict:
+            with open(file, "r") as opened_file:
+                parsed_file: dict = json.load(opened_file)
+                if parsed_file.__contains__("words"):
+                    [self.words.add(WordUtilities.process(word)) for part in parsed_file["words"].values() for word in part ]
+                else:
+                    return False
+
+        return True
+
     def save_words(self) -> None:
         try:
             with open(self.words_save_path, "w") as file:
