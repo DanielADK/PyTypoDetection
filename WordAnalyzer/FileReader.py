@@ -117,10 +117,12 @@ class FileReader:
                             if "a" in response or "ano" in response:
                                 new_word = Word(word)
                                 self.custom_words[word] = new_word
-                                # add to all_words
+                                all_words[word] = new_word
                                 print(fg.li_green + "Slovo úspěšně přidáno!")
+                                break
                             elif "n" in response or "ne" in response:
                                 print(fg.yellow + "Přeskakuji slovo!!")
+                                break
                             else:
                                 print(fg.red + "Neplatná akce!")
         self.save_custom_words()
