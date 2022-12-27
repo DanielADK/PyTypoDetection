@@ -48,17 +48,6 @@ class FileReader:
                         if len(word) != 0:
                             self.words.add(word)
         return True
-    def read_dictionary(self) -> bool:
-        all_dict: set = self.__library__.get_dictionaries()
-        for file in all_dict:
-            with open(file, "r") as opened_file:
-                parsed_file: dict = json.load(opened_file)
-                if parsed_file.__contains__("words"):
-                    [self.words.add(WordUtilities.process(word)) for part in parsed_file["words"].values() for word in part ]
-                else:
-                    return False
-
-        return True
 
     def save_words(self) -> None:
         try:
