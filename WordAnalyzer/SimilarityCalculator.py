@@ -1,11 +1,11 @@
 from WordAnalyzer.Word import Word
+from WordAnalyzer.FileReader import FileReader
 from collections import defaultdict
 def tail(word: str) -> str:
     return word[1:]
 class SimilarityCalculator:
     def __init__(self):
         self.memory: defaultdict[str, dict[str, int]] = defaultdict(dict)
-        self.words_by_len: dict[int, set[Word]] = {}
 
     def __find_in_memory_or_calc(self, a: str, b: str) -> int:
         if a < b:
@@ -40,15 +40,3 @@ class SimilarityCalculator:
             return 1 + min(self.__find_in_memory_or_calc(tail(a), b),
                            self.__find_in_memory_or_calc(a, tail(b)),
                            self.__find_in_memory_or_calc(tail(a), tail(b)))
-
-    def old_levenshtein_distance(self, a: str, b: str) -> int:
-        if len(b) == 0:
-            return len(a)
-        elif len(a) == 0:
-            return len(b)
-        elif a[0] == b[0]:
-            return self.old_levenshtein_distance(tail(a), tail(b))
-        else:
-            return 1+min(self.old_levenshtein_distance(tail(a), b),
-                         self.old_levenshtein_distance(a, tail(b)),
-                         self.old_levenshtein_distance(tail(a), tail(b)))

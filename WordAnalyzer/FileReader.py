@@ -1,4 +1,3 @@
-import json
 import WordAnalyzer.Library
 from WordAnalyzer.Word import Word
 from WordAnalyzer import WordUtilities
@@ -86,43 +85,3 @@ class FileReader:
         except EnvironmentError:
             print(fg.red + "Chyba při zápisu do souboru " + fg.rs + self.custom_words_path)
 
-    def read_and_correct(self, to_correct: str) -> None:
-        with open(to_correct, "r") as file:
-            line_counter = 1
-            new_word: Word | None = None
-            words: list[str] = []
-            # Merge words and custom_words
-            all_words: dict[str, Word] = self.words.copy()
-            for key, word in self.custom_words:
-                found_word: Word | None = self.words.get(key)
-                if found_word is None:
-                    all_words[key] = word
-
-            while True:
-                line = file.readline()
-                if not line:
-                    break
-                line_counter += 1
-                words = line.split(" ")
-                for word in words:
-                    word = WordUtilities.process(word)
-                    if len(word) == 0:
-                        continue
-                    if not word in self.words or not word in self.custom_words:
-                        while True:
-                            print(fg.blue + "Řádek " + str(line_counter))
-                            print(ef.bold + "Následujicí slovo nemáme v databázi. "
-                                            "Chcete jej přidat? (ANO/NE)" + fg.rs)
-                            response = input(fg.li_yellow + word + " ").lower()
-                            if "a" in response or "ano" in response:
-                                new_word = Word(word)
-                                self.custom_words[word] = new_word
-                                all_words[word] = new_word
-                                print(fg.li_green + "Slovo úspěšně přidáno!")
-                                break
-                            elif "n" in response or "ne" in response:
-                                print(fg.yellow + "Přeskakuji slovo!!")
-                                break
-                            else:
-                                print(fg.red + "Neplatná akce!")
-        self.save_custom_words()
