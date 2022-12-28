@@ -1,18 +1,30 @@
-from Word import Word
+from WordAnalyzer.Word import Word
+from collections import defaultdict
 def tail(word: str) -> str:
     return word[1:]
 class SimilarityCalculator:
     def __init__(self):
-        self.memory: dict[frozenset, int] = {}
+        self.memory: defaultdict[str, dict[str, int]] = defaultdict(dict)
         self.words_by_len: dict[int, set[Word]] = {}
 
     def __find_in_memory_or_calc(self, a: str, b: str) -> int:
-        found = self.memory.get(frozenset([a,b]))
+        if a < b:
+            found = self.memory.get(a)
+            if found is not None:
+                found = found.get(b)
+
+        else:
+            found = self.memory.get(b)
+            if found is not None:
+                found = found.get(a)
         if found is not None:
             return found
         else:
             sim = self.levenshtein_distance(tail(a), tail(b))
-            self.memory[frozenset([a,b])] = sim
+            if a < b:
+                self.memory[a][b] = sim
+            else:
+                self.memory[b][a] = sim
             return sim
 
 
