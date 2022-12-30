@@ -2,15 +2,23 @@ import WordAnalyzer.Library
 from WordAnalyzer.Word import Word
 from WordAnalyzer import WordUtilities
 from sty import fg, ef, rs
+from os import stat
 
 
 class FileReader:
-    def __init__(self, library: WordAnalyzer.Library):
+    class TmpLine:
+        def __init__(self, num: int, line: str):
+            self.num: int = num
+            self.line: str = line
+    def __init__(self, library: WordAnalyzer.Library, to_correct: str):
         self.__library__: WordAnalyzer.Library = library
         self.words_save_path: str = "files/cs/words.txt"
         self.words: dict[str,Word] = {}
         self.custom_words_path: str = "files/cs/custom_words.txt"
         self.custom_words: dict[str, Word] = {}
+
+        self.to_correct_file: str = to_correct
+        self.to_correct_content: list[str] = int(stat(self.to_correct_file).st_size/8)*[]
 
     def read_custom_words(self) -> bool:
         with open(self.custom_words_path, "r") as file:
@@ -84,4 +92,12 @@ class FileReader:
                 [file.write(word + "\n") for word in sorted_words]
         except EnvironmentError:
             print(fg.red + "Chyba při zápisu do souboru " + fg.rs + self.custom_words_path)
+
+    def load_to_correct(self):
+        with open(self.to_correct_file, "r", encoding="utf-8") as file:
+            it = 0
+            for x in file.read().replace('\n', ' ').lower().split(' '):
+                self.to_correct_content.insert(it, x)
+                it += 1
+
 
