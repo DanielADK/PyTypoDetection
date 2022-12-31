@@ -1,3 +1,6 @@
+import os
+import threading
+
 import WordAnalyzer.Library
 from WordAnalyzer.Word import Word
 from WordAnalyzer import WordUtilities
@@ -11,7 +14,7 @@ class FileReader:
             self.num: int = num
             self.line: str = line
     def __init__(self, library: WordAnalyzer.Library, to_correct: str):
-        self.__library__: WordAnalyzer.Library = library
+        self.__library: WordAnalyzer.Library = library
         self.words_save_path: str = "files/cs/words.txt"
         self.words: dict[str,Word] = {}
         self.custom_words_path: str = "files/cs/custom_words.txt"
@@ -40,9 +43,25 @@ class FileReader:
                     found_word.frequency += 1
 
         return True
-    def read_books(self) -> bool:
-        all_books: set = self.__library__.get_books()
-        for file in all_books:
+    def read_books(self) -> None:
+        all_books: list = list(self.__library.get_books())
+        reading_threads: list[threading.Thread] = []
+        cpu_count = int(os.cpu_count()/2)-1
+        for i in range(cpu_count):
+            reading_threads.append(
+                threading.Thread(
+                        target=self.__read_book_thread,
+                        args=(all_books[i::cpu_count])
+                )
+            )
+        for t_x in reading_threads:
+            t_x.start()
+
+        for t_x in reading_threads:
+            t_x.join()
+
+    def __read_book_thread(self, to_read: list[str]):
+        for file in to_read:
             with open(file, "r") as opened_file:
 
                 # Read line by line till the EOF
