@@ -37,13 +37,17 @@ class Corrector:
         [self.words_by_len[len(word.word)].add(word.word) for word in self.words.values()]
 
     def __corrector(self, to_do: list[str]) -> None:
-        print(fg.li_green + "Starting corrector thread: " + threading.current_thread().name + fg.white)
+        print(fg.li_green + "Starting corrector thread: " +
+              threading.current_thread().name + fg.white)
         for word in to_do:
             word = process(word)
             if len(word) == 0:
                 continue
-            if self.words_by_len.get(len(word)) is not None and word not in self.words_by_len.get(len(word)):
-                possible_word: Corrector.UnknownWord = Corrector.UnknownWord(word, self.__line_counter)
+            if self.words_by_len.get(len(word)) is not None \
+                    and word not in self.words_by_len.get(len(word)):
+
+                possible_word: Corrector.UnknownWord = \
+                    Corrector.UnknownWord(word, self.__line_counter)
                 if len(word) > 2 and self.words_by_len.get(len(word)-1) is not None:
                     for possible in self.words_by_len.get(len(word)-1):
                         if self.similarity_calc.levenshtein_distance(word, possible) > 1:
@@ -62,15 +66,16 @@ class Corrector:
 
 
     def __typo_ask(self):
-        print(fg.li_green + "Starting UI thread: " + threading.current_thread().name + fg.rs)
+        print(fg.li_green + "Starting UI thread: " +
+              threading.current_thread().name + fg.rs)
         while self.__reading:
-            if not self.__word_queue.empty():
+            while not self.__word_queue.empty():
                 word: Corrector.UnknownWord = self.__word_queue.get()
-                print("Našli jsme pravděpodobný překlep na řádku " + str(word.line) + " ve slově:")
-                print(word.word)
+                print("Found unknown word:")
+                print(" " + word.word)
                 if len(word.possible_words) > 0:
-                    print("Nalezené podobnosti:")
-                    print(word.possible_words)
+                    print("Possible words:")
+                    print(" " + ", ".join(word.possible_words))
                 print()
             time.sleep(0.1)
 

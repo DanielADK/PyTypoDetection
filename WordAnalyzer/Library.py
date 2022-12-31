@@ -11,9 +11,6 @@ class Library:
         # Load books
         for curr_path, subdirs, files in walk(self.__source_folder__ + "/books"):
             [self.__books__.add(path.join(curr_path, file)) for file in files]
-    def load_dictionaries(self):
-        for curr_path, subdirs, files in walk(self.__source_folder__ + "/blabot"):
-            [self.__dictionaries__.add(path.join(curr_path, file)) for file in files]
 
     def get_books(self):
         return self.__books__

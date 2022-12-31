@@ -78,6 +78,12 @@ class FileReader:
 
         return True
 
+    def load_words(self) -> None:
+        with open(self.words_save_path, "r", encoding="utf-8") as file:
+            for word in file.read().split("\n"):
+                self.words[word] = Word(word)
+
+
     def save_words(self) -> None:
         try:
             with open(self.words_save_path, "w") as file:
@@ -93,7 +99,7 @@ class FileReader:
         except EnvironmentError:
             print(fg.red + "Chyba při zápisu do souboru " + fg.rs + self.custom_words_path)
 
-    def load_to_correct(self):
+    def load_to_correct(self) -> None:
         with open(self.to_correct_file, "r", encoding="utf-8") as file:
             it = 0
             for x in file.read().replace('\n', ' ').lower().split(' '):
